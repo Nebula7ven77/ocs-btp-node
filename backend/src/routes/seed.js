@@ -5,6 +5,7 @@ const { Client } = require('pg')
 
 module.exports = async function seedRoute(fastify) {
 
+  // Route diagnostic - voir les colonnes de la table utilisateurs
   fastify.post('/seed-init', async (request, reply) => {
     const { secret } = request.body || {}
     if (secret !== 'seed-7venhotel-2026') {
@@ -22,39 +23,34 @@ module.exports = async function seedRoute(fastify) {
       await client.connect()
       logs.push('✅ Connecté')
 
-      // 1. Tenant
-      await client.query(`
-        INSERT INTO tenants (id, nom, slug, email_contact, devise_defaut)
-        VALUES ('11111111-1111-1111-1111-111111111111','Groupe Hôtelier Royal Cameroun','royal-cameroun','admin@royalcameroun.cm','XAF')
-        ON CONFLICT (id) DO NOTHING
+      // Vérifier les colonnes existantes de la table utilisateurs
+      const { rows: colonnes } = await client.query(`
+        SELECT column_name FROM information_schema.columns
+        WHERE table_name = 'utilisateurs'
+        ORDER BY ordinal_position
       `)
-      logs.push('✅ Tenant')
+      logs.push(`📋 Colonnes utilisateurs: ${colonnes.map(c => c.column_name).join(', ')}`)
 
-      // 2. Abonnement
-      await client.query(`
-        INSERT INTO abonnements (tenant_id, plan, statut, date_debut, max_hotels, max_chambres, max_utilisateurs)
-        VALUES ('11111111-1111-1111-1111-111111111111','enterprise','actif',CURRENT_DATE,5,500,50)
-        ON CONFLICT DO NOTHING
-      `)
-      logs.push('✅ Abonnement')
+      // Ajouter les colonnes manquantes si nécessaire
+      const colonnesExistantes = colonnes.map(c => c.column_name)
 
-      // 3. Hôtel
-      await client.query(`
-        INSERT INTO hotels (id, tenant_id, nom, slug, adresse, ville, pays, telephone, email, nombre_etoiles, nombre_chambres, nombre_etages)
-        VALUES ('22222222-2222-2222-2222-222222222222','11111111-1111-1111-1111-111111111111','Hôtel Royal Yaoundé','hotel-royal-yaounde','Avenue Kennedy','Yaoundé','Cameroun','+237 222 123 456','reception@royalyaounde.cm',5,142,5)
-        ON CONFLICT (id) DO NOTHING
-      `)
-      logs.push('✅ Hôtel')
+      const colonnesRequises = [
+        { nom: 'langue_preferee', def: `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS langue_preferee VARCHAR(10) DEFAULT 'fr'` },
+        { nom: 'avatar_url',      def: `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS avatar_url TEXT` },
+        { nom: 'actif',           def: `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS actif BOOLEAN DEFAULT TRUE` },
+        { nom: 'derniere_connexion', def: `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS derniere_connexion TIMESTAMPTZ` },
+        { nom: 'hotel_id',        def: `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS hotel_id UUID` },
+        { nom: 'tenant_id',       def: `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS tenant_id UUID` },
+      ]
 
-      // 4. Paramètres hôtel
-      await client.query(`
-        INSERT INTO parametres_hotel (hotel_id, devise, fuseau_horaire, heure_arrivee, heure_depart)
-        VALUES ('22222222-2222-2222-2222-222222222222','XAF','Africa/Douala','14:00:00','12:00:00')
-        ON CONFLICT (hotel_id) DO NOTHING
-      `)
-      logs.push('✅ Paramètres hôtel')
+      for (const col of colonnesRequises) {
+        if (!colonnesExistantes.includes(col.nom)) {
+          await client.query(col.def)
+          logs.push(`✅ Colonne ajoutée : ${col.nom}`)
+        }
+      }
 
-      // 5. Utilisateurs
+      // Mettre à jour les utilisateurs
       const adminHash = await bcrypt.hash(process.env.SUPER_ADMIN_PASSWORD || 'Admin@2024!', 12)
       const demoHash  = await bcrypt.hash('demo123', 12)
 
@@ -69,60 +65,25 @@ module.exports = async function seedRoute(fastify) {
 
       for (const [id, email, hash, prenom, nom, role] of users) {
         await client.query(`
-          INSERT INTO utilisateurs (id, tenant_id, hotel_id, email, mot_de_passe_hash, prenom, nom, role)
-          VALUES ($1,'11111111-1111-1111-1111-111111111111','22222222-2222-2222-2222-222222222222',$2,$3,$4,$5,$6)
-          ON CONFLICT (id) DO UPDATE SET mot_de_passe_hash = $3
+          INSERT INTO utilisateurs (id, tenant_id, hotel_id, email, mot_de_passe_hash, prenom, nom, role, actif)
+          VALUES ($1,'11111111-1111-1111-1111-111111111111','22222222-2222-2222-2222-222222222222',$2,$3,$4,$5,$6,true)
+          ON CONFLICT (id) DO UPDATE SET mot_de_passe_hash = $3, actif = true
         `, [id, email, hash, prenom, nom, role])
       }
       logs.push(`✅ ${users.length} utilisateurs créés/mis à jour`)
 
-      // 6. Taxes
-      await client.query(`
-        INSERT INTO taxes (hotel_id, nom, code, type_taxe, valeur, s_applique_a, active, ordre)
-        VALUES
-          ('22222222-2222-2222-2222-222222222222','TVA Hôtellerie','TVA_HOTEL','pourcentage',19.25,'hebergement',true,1),
-          ('22222222-2222-2222-2222-222222222222','Taxe de séjour','TAXE_SEJOUR','fixe',500,'hebergement',true,2),
-          ('22222222-2222-2222-2222-222222222222','Service','SERVICE','pourcentage',10,'restaurant',true,3)
-        ON CONFLICT DO NOTHING
-      `)
-      logs.push('✅ Taxes')
-
-      // 7. Types de chambre
-      await client.query(`
-        INSERT INTO types_chambre (hotel_id, nom, description, capacite_adultes, superficie_m2, tarif_base, devise)
-        VALUES
-          ('22222222-2222-2222-2222-222222222222','Standard','Chambre confortable',2,18,22000,'XAF'),
-          ('22222222-2222-2222-2222-222222222222','Deluxe','Vue piscine et balcon',2,32,38000,'XAF'),
-          ('22222222-2222-2222-2222-222222222222','Suite Royale','Suite panoramique',4,72,98000,'XAF')
-        ON CONFLICT DO NOTHING
-      `)
-      logs.push('✅ Types de chambre')
-
-      // 8. Permissions
-      await client.query(`
-        INSERT INTO permissions (code, description, module, action) VALUES
-          ('reservations.lire','Voir les réservations','reservations','lire'),
-          ('reservations.creer','Créer une réservation','reservations','creer'),
-          ('reservations.modifier','Modifier une réservation','reservations','modifier'),
-          ('chambres.lire','Voir les chambres','chambres','lire'),
-          ('clients.lire','Voir les clients','clients','lire'),
-          ('clients.creer','Créer un client','clients','creer'),
-          ('menage.lire','Voir le ménage','menage','lire'),
-          ('maintenance.lire','Voir la maintenance','maintenance','lire'),
-          ('restaurant.lire','Voir le restaurant','restaurant','lire'),
-          ('restaurant.creer','Créer une commande','restaurant','creer'),
-          ('facturation.lire','Voir la facturation','facturation','lire'),
-          ('analytics.lire','Voir les stats','analytics','lire'),
-          ('parametres.lire','Voir les paramètres','parametres','lire'),
-          ('parametres.modifier','Modifier les paramètres','parametres','modifier'),
-          ('staff.administrer','Gérer le personnel','staff','administrer'),
-          ('plateforme.administrer','Administrer la plateforme','plateforme','administrer')
-        ON CONFLICT (code) DO NOTHING
-      `)
-      logs.push('✅ Permissions')
+      // Test connexion directe
+      const { rows: testUser } = await client.query(
+        `SELECT id, email, role, actif, mot_de_passe_hash FROM utilisateurs WHERE email = 'manager@demo.com'`
+      )
+      if (testUser.length > 0) {
+        logs.push(`✅ Test utilisateur: ${testUser[0].email} | role: ${testUser[0].role} | actif: ${testUser[0].actif} | hash: ${testUser[0].mot_de_passe_hash.slice(0,20)}...`)
+      } else {
+        logs.push('❌ Utilisateur manager non trouvé !')
+      }
 
       await client.end()
-      logs.push('🎉 Base de données initialisée avec succès !')
+      logs.push('🎉 Terminé !')
 
       reply.send({ succes: true, logs })
 
