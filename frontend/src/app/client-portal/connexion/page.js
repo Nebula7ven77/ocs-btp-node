@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { authAPI } from '../../../lib/api'
+import { authAPI } from '@/lib/api'
 
 export default function ClientConnexion() {
   const [email, setEmail] = useState('')

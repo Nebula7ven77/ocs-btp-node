@@ -1,7 +1,7 @@
 'use client'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '../../lib/utils'
+import { useAuthStore } from '@/lib/utils'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 

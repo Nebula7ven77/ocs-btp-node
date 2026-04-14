@@ -85,8 +85,8 @@ export function fmtTime(date) {
 let currentLocale = {}
 
 export async function loadLocale(lang = 'fr') {
-  const module = await import(`../locales/${lang}.json`)
-  currentLocale = module.default
+  const localeData = await import(`../locales/${lang}.json`)
+  currentLocale = localeData.default
 }
 
 export function t(key, fallback = '') {

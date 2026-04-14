@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import AppLayout from '../../components/layout/AppLayout'
-import { aiAPI, analyticsAPI } from '../../lib/api'
+import AppLayout from '@/components/layout/AppLayout'
+import { aiAPI, analyticsAPI } from '@/lib/api'
 
 const SUGGESTIONS = [
   { label: "📊 Occupation", question: "Analyse détaillée du taux d'occupation cette semaine" },

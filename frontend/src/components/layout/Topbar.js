@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { useAuthStore } from '../../lib/utils'
+import { useAuthStore } from '@/lib/utils'
 
 export default function Topbar({ titre, sousTitre }) {
   const { user, hotel } = useAuthStore()

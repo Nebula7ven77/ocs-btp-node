@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { bookingAPI } from '../../lib/api'
+import { bookingAPI } from '@/lib/api'
 
 export default function BookingHome() {
   const [search, setSearch] = useState({ checkin:'', checkout:'', personnes:2 })

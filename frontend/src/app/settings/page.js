@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
-import AppLayout from '../../components/layout/AppLayout'
-import { hotelsAPI } from '../../lib/api'
-import { fmt, fmtDate } from '../../lib/utils'
+import AppLayout from '@/components/layout/AppLayout'
+import { hotelsAPI } from '@/lib/api'
+import { fmt, fmtDate } from '@/lib/utils'
 
 export default function SettingsPage() {
   const [data, setData] = useState([])
@@ -46,7 +46,7 @@ export default function SettingsPage() {
             <div className="p-8 text-center text-xs text-[var(--text-3)]">
               <div className="text-4xl mb-4">📋</div>
               <div className="font-semibold mb-2">Module Paramètres opérationnel</div>
-              <div>Connecté à l'API backend — Les données apparaîtront ici</div>
+              <div>Connecté à l&apos;API backend — Les données apparaîtront ici</div>
             </div>
           </div>
         )}

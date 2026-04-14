@@ -1,8 +1,8 @@
 'use client'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useAuthStore } from '../../lib/utils'
-import { authAPI } from '../../lib/api'
+import { useAuthStore } from '@/lib/utils'
+import { authAPI } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 const MENUS_PAR_ROLE = {

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { bookingAPI } from '../../../lib/api'
+import { bookingAPI } from '@/lib/api'
 
 export default function BookingPaiement() {
   const [chambre, setChambre] = useState(null)
@@ -88,7 +88,7 @@ export default function BookingPaiement() {
           <div className="bg-[#111827] border border-white/10 rounded-2xl p-5">
             <h3 className="text-white font-bold text-sm mb-4 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-black">2</span>Mode de paiement</h3>
             <div className="space-y-2">
-              {[['carte','💳','Carte bancaire','Visa · Mastercard · Amex'],['mobile','📱','Mobile Money','MTN MoMo · Orange Money'],['hotel','🏨','À l'arrivée','Paiement à la réception']].map(([val,ico,lbl,sub]) => (
+              {[['carte','💳','Carte bancaire','Visa · Mastercard · Amex'],['mobile','📱','Mobile Money','MTN MoMo · Orange Money'],['hotel','🏨','À l\'arrivée','Paiement à la réception']].map(([val,ico,lbl,sub]) => (
                 <label key={val} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${paiement===val?'border-blue-500 bg-blue-500/10':'border-white/10 hover:border-white/20'}`}>
                   <input type="radio" name="paiement" value={val} checked={paiement===val} onChange={() => setPaiement(val)} className="hidden" />
                   <span className="text-xl">{ico}</span>

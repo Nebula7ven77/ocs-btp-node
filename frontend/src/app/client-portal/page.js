@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { portailClientAPI, authAPI } from '../../lib/api'
+import { portailClientAPI, authAPI } from '@/lib/api'
 
 export default function ClientPortal() {
   const [client, setClient] = useState(null)
@@ -89,7 +89,7 @@ export default function ClientPortal() {
               <span className="text-4xl">📲</span>
               <div className="flex-1">
                 <div className="text-sm font-bold text-white mb-1">Check-in en ligne disponible</div>
-                <div className="text-xs text-gray-400">Évitez la file d'attente à la réception. Disponible 24h avant votre arrivée.</div>
+                <div className="text-xs text-gray-400">Évitez la file d&apos;attente à la réception. Disponible 24h avant votre arrivée.</div>
               </div>
               <button className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">Check-in →</button>
             </div>

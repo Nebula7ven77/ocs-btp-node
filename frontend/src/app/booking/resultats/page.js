@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { bookingAPI, chambresAPI } from '../../../lib/api'
+import { bookingAPI, chambresAPI } from '@/lib/api'
 
 export default function BookingResultats() {
   const [chambres, setChambres] = useState([])

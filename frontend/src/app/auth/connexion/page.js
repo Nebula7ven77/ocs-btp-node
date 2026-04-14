@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { authAPI } from '../../lib/api'
-import { useAuthStore } from '../../lib/utils'
+import { authAPI } from '@/lib/api'
+import { useAuthStore } from '@/lib/utils'
 
 const COMPTES_DEMO = [
   { email: 'superadmin@demo.com', role: 'Super Admin',   couleur: '#8B5CF6', icone: '⚙' },
@@ -71,7 +71,7 @@ export default function ConnexionPage() {
             Gérez votre hôtel<br />avec <span style={{ background: 'linear-gradient(90deg,#60A5FA,#A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>élégance.</span>
           </h1>
           <p className="text-sm text-gray-400 leading-relaxed max-w-sm">
-            Plateforme SaaS hôtelière complète pour l'Afrique et le monde. Réservations, housekeeping, restaurant, IA — tout en un.
+            Plateforme SaaS hôtelière complète pour l&apos;Afrique et le monde. Réservations, housekeeping, restaurant, IA — tout en un.
           </p>
           <div className="flex gap-2 mt-5 flex-wrap">
             {['🌍 Multi-hôtels','💱 XAF & 11 devises','🤖 Ouwalou AI','🔐 RBAC sécurisé'].map(tag => (

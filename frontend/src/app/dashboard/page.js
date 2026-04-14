@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react'
 import { Bar, Line, Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js'
-import AppLayout from '../../components/layout/AppLayout'
-import { analyticsAPI, reservationsAPI, aiAPI } from '../../lib/api'
-import { fmt, fmtDate, STATUT_RESERVATION_COULEUR } from '../../lib/utils'
+import AppLayout from '@/components/layout/AppLayout'
+import { analyticsAPI, reservationsAPI, aiAPI } from '@/lib/api'
+import { fmt, fmtDate, STATUT_RESERVATION_COULEUR } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler)
