@@ -164,7 +164,8 @@ async function demarrer() {
     await registerRoutes()
 
     const port = parseInt(process.env.PORT) || 3001
-    const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1'
+    const host = '0.0.0.0'
+    
 
     await server.listen({ port, host })
     server.log.info(`🚀 7venHotel Cloud API démarré sur http://${host}:${port}`)
