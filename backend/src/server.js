@@ -163,7 +163,7 @@ async function demarrer() {
     await registerPlugins()
     await registerRoutes()
 
-    const port = parseInt(process.env.APP_PORT) || 3001
+    const port = parseInt(process.env.PORT) || 3001
     const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1'
 
     await server.listen({ port, host })
