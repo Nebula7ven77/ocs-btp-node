@@ -1,4 +1,13 @@
 'use strict'
+if (process.env.DB_DISABLED === 'true') {
+  console.log('⚠️ Database disabled');
+
+  module.exports = async function () {
+    // skip DB init
+  };
+
+  return;
+}
 
 const fp = require('fastify-plugin')
 const Knex = require('knex')
