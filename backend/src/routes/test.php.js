@@ -1,25 +1,22 @@
-const phpApi = require('../services/phpApi.service');
+fastify.get('/test-php', async (req, reply) => {
+  const start = Date.now();
 
-module.exports = async function (fastify) {
-  fastify.get('/test-php', async (req, reply) => {
-    try {
-      const tenantId = 1; // TEMP pour test
+  try {
+    const tenantId = 1;
+    const alertes = await phpApi.getAlertes(tenantId);
 
-      const alertes = await phpApi.getAlertes(tenantId);
+    return {
+      success: true,
+      duration_ms: Date.now() - start,
+      count: alertes.length,
+      data: alertes
+    };
 
-      return {
-        success: true,
-        source: 'NODE → PHP',
-        count: alertes.length,
-        data: alertes
-      };
-
-    } catch (err) {
-      return {
-        error: true,
-        message: err.message,
-        status: err.statusCode || 500
-      };
-    }
-  });
-};
+  } catch (err) {
+    return {
+      error: true,
+      duration_ms: Date.now() - start,
+      message: err.message
+    };
+  }
+});
